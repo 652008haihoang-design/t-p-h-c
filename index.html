@@ -1,0 +1,513 @@
+# t-p-h-c
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Tiếng Việt Lớp 1 - Trang 15 (Hoạt Hình Vui Nhộn)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti for winning effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts: Quicksand -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                    colors: {
+                        brandYellow: '#FFE15D',
+                        brandPink: '#FF9494',
+                        brandGreen: '#A8E6CF',
+                        brandBlue: '#A0E7E5',
+                        brandPurple: '#B4A7D6',
+                        pastelOrange: '#FFD3B6',
+                    },
+                    boxShadow: {
+                        'cartoon': '0px 8px 0px 0px rgba(0, 0, 0, 0.15)',
+                        'cartoon-sm': '0px 4px 0px 0px rgba(0, 0, 0, 0.15)',
+                        'cartoon-pressed': '0px 2px 0px 0px rgba(0, 0, 0, 0.15)',
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 2s infinite',
+                        'wiggle': 'wiggle 0.5s ease-in-out infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #A0E7E5 0%, #FF9494 50%, #FFE15D 100%);
+            background-attachment: fixed;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFE15D;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF9494;
+            border-radius: 10px;
+        }
+
+        .btn-cartoon {
+            transition: all 0.1s ease;
+        }
+        .btn-cartoon:active {
+            transform: translateY(4px);
+        }
+
+        /* Cloud Background Items */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50px;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12 flex flex-col items-center relative overflow-x-hidden">
+
+    <!-- Floating Background Clouds -->
+    <div class="cloud w-32 h-12 top-10 left-5 animate-float"></div>
+    <div class="cloud w-48 h-16 top-20 right-10 animate-float" style="animation-delay: 1s;"></div>
+    <div class="cloud w-40 h-14 bottom-10 left-12 animate-float" style="animation-delay: 1.5s;"></div>
+
+    <!-- Header & Scoreboard -->
+    <header class="w-full max-w-4xl px-4 pt-6 z-10">
+        <div class="bg-white/90 backdrop-blur-md rounded-3xl p-4 md:p-6 border-4 border-white shadow-cartoon flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Mascot / Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-14 h-14 md:w-16 md:h-16 bg-brandYellow rounded-full border-4 border-amber-400 flex items-center justify-center text-3xl shadow-cartoon-sm animate-wiggle cursor-pointer" onclick="speakText('Chào bé! Chúng mình cùng học Tiếng Việt Trang 15 nhé!')">
+                    🐸
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-amber-600 drop-shadow">Tiếng Việt Lớp 1</h1>
+                    <p class="text-xs md:text-sm font-semibold text-gray-600">Trang 15 • Bộ Sách Chân Trời / Kết Nối</p>
+                </div>
+            </div>
+
+            <!-- Stars Score -->
+            <div class="flex items-center gap-2 bg-amber-100 border-2 border-amber-300 px-4 py-2 rounded-2xl shadow-inner">
+                <i class="fa-solid fa-star text-3xl text-yellow-400 animate-bounce"></i>
+                <span id="star-count" class="text-3xl font-extrabold text-amber-700">0</span>
+                <span class="text-xs text-amber-600 font-bold uppercase">Sao</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="w-full max-w-4xl px-4 mt-6 z-10">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <button id="tab-learn-btn" onclick="switchTab('learn')" 
+                class="btn-cartoon bg-emerald-400 hover:bg-emerald-500 text-white font-bold text-lg md:text-xl py-3 px-4 rounded-2xl border-4 border-white shadow-cartoon flex items-center justify-center gap-2">
+                <i class="fa-solid fa-book-open"></i> 📖 Học Bài
+            </button>
+            <button id="tab-quiz-btn" onclick="switchTab('quiz')" 
+                class="btn-cartoon bg-sky-400 hover:bg-sky-500 text-white font-bold text-lg md:text-xl py-3 px-4 rounded-2xl border-4 border-white shadow-cartoon flex items-center justify-center gap-2">
+                <i class="fa-solid fa-gamepad"></i> 🎮 Thử Thách
+            </button>
+            <button id="tab-speech-btn" onclick="switchTab('speech')" 
+                class="btn-cartoon bg-purple-400 hover:bg-purple-500 text-white font-bold text-lg md:text-xl py-3 px-4 rounded-2xl border-4 border-white shadow-cartoon col-span-2 md:col-span-1 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-comments"></i> 🗣️ Luyện Nói
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="w-full max-w-4xl px-4 mt-6 z-10 flex-grow">
+
+        <!-- TAB 1: HỌC BÀI VUI NHỘN -->
+        <section id="tab-learn" class="space-y-6">
+            
+            <!-- Section 1: Âm & Chữ cái & Dấu -->
+            <div class="bg-white/95 rounded-3xl p-6 border-4 border-white shadow-cartoon">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-rose-400 text-white font-bold text-lg px-3 py-1 rounded-xl shadow-cartoon-sm">1</span>
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-800">Âm, Chữ Cái & Dấu Thanh</h2>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <!-- Chữ a -->
+                    <div onclick="playCardSound('a', 'Âm a', 'Chữ a')" class="btn-cartoon bg-pink-100 hover:bg-pink-200 border-4 border-pink-300 rounded-3xl p-4 text-center cursor-pointer shadow-cartoon-sm flex flex-col items-center justify-between">
+                        <span class="text-6xl font-black text-pink-600">a</span>
+                        <span class="mt-2 text-sm font-bold text-gray-700 bg-white px-3 py-1 rounded-full border border-pink-200">Âm a</span>
+                    </div>
+
+                    <!-- Chữ c -->
+                    <div onclick="playCardSound('cờ', 'Âm cờ', 'Chữ c')" class="btn-cartoon bg-blue-100 hover:bg-blue-200 border-4 border-blue-300 rounded-3xl p-4 text-center cursor-pointer shadow-cartoon-sm flex flex-col items-center justify-between">
+                        <span class="text-6xl font-black text-blue-600">c</span>
+                        <span class="mt-2 text-sm font-bold text-gray-700 bg-white px-3 py-1 rounded-full border border-blue-200">Âm cờ</span>
+                    </div>
+
+                    <!-- Dấu hỏi -->
+                    <div onclick="playCardSound('Dấu hỏi', 'Dấu hỏi', 'Dấu hỏi')" class="btn-cartoon bg-amber-100 hover:bg-amber-200 border-4 border-amber-300 rounded-3xl p-4 text-center cursor-pointer shadow-cartoon-sm flex flex-col items-center justify-between">
+                        <span class="text-6xl font-black text-amber-600"> ̉ </span>
+                        <span class="mt-2 text-sm font-bold text-gray-700 bg-white px-3 py-1 rounded-full border border-amber-200">Dấu hỏi</span>
+                    </div>
+
+                    <!-- Dấu nặng -->
+                    <div onclick="playCardSound('Dấu nặng', 'Dấu nặng', 'Dấu nặng')" class="btn-cartoon bg-emerald-100 hover:bg-emerald-200 border-4 border-emerald-300 rounded-3xl p-4 text-center cursor-pointer shadow-cartoon-sm flex flex-col items-center justify-between">
+                        <span class="text-6xl font-black text-emerald-600"> ̣ </span>
+                        <span class="mt-2 text-sm font-bold text-gray-700 bg-white px-3 py-1 rounded-full border border-emerald-200">Dấu nặng</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Từ Ứng Dụng & Nhận Diện -->
+            <div class="bg-white/95 rounded-3xl p-6 border-4 border-white shadow-cartoon">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-amber-400 text-white font-bold text-lg px-3 py-1 rounded-xl shadow-cartoon-sm">2</span>
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-800">Từ Ứng Dụng Trang 15</h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <!-- Cỏ -->
+                    <div onclick="playWordCard('cỏ', 'Cờ o co hỏi cỏ - Cây cỏ', '🌱')" class="btn-cartoon bg-green-50 hover:bg-green-100 border-4 border-green-300 rounded-3xl p-5 text-center cursor-pointer shadow-cartoon-sm flex flex-col items-center">
+                        <div class="text-6xl mb-2 animate-bounce-slow">🌱</div>
+                        <div class="text-4xl font-black text-green-700">cỏ</div>
+                        <div class="mt-2 text-xs font-bold text-green-800 bg-green-200 px-3 py-1 rounded-full">c - o - hỏi - cỏ</div>
+                    </div>
+
+                    <!-- Cọ -->
+                    <div onclick="playWordCard('cọ', 'Cờ o co nặng cọ - Cây cọ', '🌴')" class="btn-cartoon bg-orange-50 hover:bg-orange-100 border-4 border-orange-300 rounded-3xl p-5 text-center cursor-pointer shadow-cartoon-sm flex flex-col items-center">
+                        <div class="text-6xl mb-2 animate-bounce-slow">🌴</div>
+                        <div class="text-4xl font-black text-orange-700">cọ</div>
+                        <div class="mt-2 text-xs font-bold text-orange-800 bg-orange-200 px-3 py-1 rounded-full">c - o - nặng - cọ</div>
+                    </div>
+
+                    <!-- Cá -->
+                    <div onclick="playWordCard('cá', 'Cờ a ca sắc cá - Con cá', '🐟')" class="btn-cartoon bg-sky-50 hover:bg-sky-100 border-4 border-sky-300 rounded-3xl p-5 text-center cursor-pointer shadow-cartoon-sm flex flex-col items-center">
+                        <div class="text-6xl mb-2 animate-bounce-slow">🐟</div>
+                        <div class="text-4xl font-black text-sky-700">cá</div>
+                        <div class="mt-2 text-xs font-bold text-sky-800 bg-sky-200 px-3 py-1 rounded-full">c - a - sắc - cá</div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- TAB 2: TRÒ CHƠI & THỬ THÁCH -->
+        <section id="tab-quiz" class="hidden space-y-6">
+            <div class="bg-white/95 rounded-3xl p-6 border-4 border-white shadow-cartoon text-center">
+                
+                <!-- Game Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <span id="quiz-progress" class="bg-indigo-100 text-indigo-700 font-bold px-4 py-2 rounded-2xl text-sm border-2 border-indigo-200">
+                        Câu 1 / 5
+                    </span>
+                    <button onclick="playQuizPrompt()" class="btn-cartoon bg-amber-400 hover:bg-amber-500 text-white font-bold px-4 py-2 rounded-2xl border-2 border-white shadow-cartoon-sm flex items-center gap-2">
+                        <i class="fa-solid fa-volume-high text-lg"></i> Nghe Lại Câu Hỏi
+                    </button>
+                </div>
+
+                <!-- Mascot & Question Prompt -->
+                <div class="my-6 flex flex-col items-center">
+                    <div class="w-20 h-20 bg-amber-200 rounded-full border-4 border-amber-400 flex items-center justify-center text-4xl shadow-cartoon mb-3 animate-float">
+                        🐥
+                    </div>
+                    <h3 id="quiz-prompt" class="text-2xl md:text-3xl font-extrabold text-gray-800 max-w-lg">
+                        Đang tải câu hỏi...
+                    </h3>
+                </div>
+
+                <!-- Answer Options -->
+                <div id="quiz-options" class="grid grid-cols-2 md:grid-cols-2 gap-4 mt-8">
+                    <!-- Dynamic Buttons Generated via JS -->
+                </div>
+
+                <!-- Feedback Message -->
+                <div id="quiz-feedback" class="mt-6 min-h-[3rem] flex items-center justify-center text-2xl font-black">
+                    <!-- Correct/Incorrect Animation Message -->
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 3: LUYỆN NÓI & GIAO TIẾP -->
+        <section id="tab-speech" class="hidden space-y-6">
+            <div class="bg-white/95 rounded-3xl p-6 border-4 border-white shadow-cartoon">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="bg-purple-400 text-white font-bold text-lg px-3 py-1 rounded-xl shadow-cartoon-sm">3</span>
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-800">Luyện Nói: Lời Chào Hỏi Lịch Sự</h2>
+                </div>
+
+                <p class="text-gray-600 mb-6 font-semibold">Bé hãy bấm vào từng bức tranh để nghe mẫu và nhại theo thật to nhé!</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Scenario 1 -->
+                    <div onclick="playSpeechScenario('Con chào bố ạ!', 'Khi bố về nhà, bé mỉm cười khoanh tay lễ phép chào bố.', '👨‍👧')" class="btn-cartoon bg-purple-50 hover:bg-purple-100 border-4 border-purple-300 rounded-3xl p-6 cursor-pointer shadow-cartoon-sm flex items-center gap-4">
+                        <div class="text-6xl bg-white p-3 rounded-2xl border-2 border-purple-200">👨‍👧</div>
+                        <div class="text-left">
+                            <span class="text-xs font-bold text-purple-600 uppercase tracking-wider">Tình huống 1</span>
+                            <h4 class="text-2xl font-extrabold text-purple-800">"Con chào bố ạ!"</h4>
+                            <p class="text-xs text-gray-500 font-semibold mt-1">Lễ phép khi chào bố lúc về nhà</p>
+                        </div>
+                    </div>
+
+                    <!-- Scenario 2 -->
+                    <div onclick="playSpeechScenario('Con chào cô ạ!', 'Khi đến lớp học, bé khoanh tay chào cô giáo thật ngoan.', '👩‍🏫')" class="btn-cartoon bg-pink-50 hover:bg-pink-100 border-4 border-pink-300 rounded-3xl p-6 cursor-pointer shadow-cartoon-sm flex items-center gap-4">
+                        <div class="text-6xl bg-white p-3 rounded-2xl border-2 border-pink-200">👩‍🏫</div>
+                        <div class="text-left">
+                            <span class="text-xs font-bold text-pink-600 uppercase tracking-wider">Tình huống 2</span>
+                            <h4 class="text-2xl font-extrabold text-pink-800">"Con chào cô ạ!"</h4>
+                            <p class="text-xs text-gray-500 font-semibold mt-1">Lễ phép khi gặp cô giáo ở trường</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Practice Box -->
+                <div class="mt-8 bg-amber-50 border-4 border-dashed border-amber-300 rounded-3xl p-6 text-center">
+                    <div class="text-4xl mb-2">⭐ Bé Ngoan Lễ Phép ⭐</div>
+                    <p class="text-gray-700 font-bold mb-4">Gặp người lớn bé luôn khoanh tay và nói câu gì nào?</p>
+                    <button onclick="speakText('Con chào người lớn ạ! Bé ngoan lắm!')" class="btn-cartoon bg-amber-400 hover:bg-amber-500 text-white font-extrabold text-xl py-3 px-8 rounded-2xl border-4 border-white shadow-cartoon">
+                        🔊 Nghe Lời Khuyên Của Chú Ếch
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-white font-bold text-sm z-10 drop-shadow">
+        <p>Ứng Dụng Học Tiếng Việt Lớp 1 • Tương Tích GitHub Pages</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- State Variables ---
+        let starsScore = 0;
+        let currentTab = 'learn';
+        let currentQuizIndex = 0;
+
+        // --- Web Audio API Synth Sounds ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playCorrectSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+
+        function playWrongSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+            osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.3); // A2
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+
+        // --- Speech Synthesis API ---
+        function speakText(text, rate = 0.85) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop current speech
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'vi-VN';
+                utterance.rate = rate; // Slow & clear for kids
+                utterance.pitch = 1.1; // Slightly friendly higher pitch
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Card sounds
+        function playCardSound(speakValue, title, desc) {
+            speakText(speakValue);
+        }
+
+        function playWordCard(word, spellout, emoji) {
+            speakText(spellout);
+        }
+
+        function playSpeechScenario(text, description, emoji) {
+            speakText(text + " " + description);
+        }
+
+        // --- Tab Switching ---
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('tab-learn').classList.add('hidden');
+            document.getElementById('tab-quiz').classList.add('hidden');
+            document.getElementById('tab-speech').classList.add('hidden');
+
+            document.getElementById('tab-learn-btn').classList.remove('ring-4', 'ring-yellow-300');
+            document.getElementById('tab-quiz-btn').classList.remove('ring-4', 'ring-yellow-300');
+            document.getElementById('tab-speech-btn').classList.remove('ring-4', 'ring-yellow-300');
+
+            if (tab === 'learn') {
+                document.getElementById('tab-learn').classList.remove('hidden');
+                document.getElementById('tab-learn-btn').classList.add('ring-4', 'ring-yellow-300');
+            } else if (tab === 'quiz') {
+                document.getElementById('tab-quiz').classList.remove('hidden');
+                document.getElementById('tab-quiz-btn').classList.add('ring-4', 'ring-yellow-300');
+                loadQuizQuestion();
+            } else if (tab === 'speech') {
+                document.getElementById('tab-speech').classList.remove('hidden');
+                document.getElementById('tab-speech-btn').classList.add('ring-4', 'ring-yellow-300');
+            }
+        }
+
+        // --- Quiz Data & Logic ---
+        const quizData = [
+            {
+                prompt: "Bé hãy bấm vào chữ 'cỏ' nào!",
+                speak: "Bé hãy bấm vào chữ cỏ nào!",
+                options: [
+                    { text: "🌱 cỏ", correct: true, val: "cỏ" },
+                    { text: "🌴 cọ", correct: false, val: "cọ" },
+                    { text: "🐟 cá", correct: false, val: "cá" },
+                    { text: "🅰️ a", correct: false, val: "a" }
+                ]
+            },
+            {
+                prompt: "Đâu là 'Dấu hỏi' vậy bé?",
+                speak: "Đâu là dấu hỏi vậy bé?",
+                options: [
+                    { text: "Dấu nặng ( ̣ )", correct: false, val: "dấu nặng" },
+                    { text: "Dấu hỏi ( ̉ )", correct: true, val: "dấu hỏi" },
+                    { text: "Dấu sắc ( ́ )", correct: false, val: "dấu sắc" },
+                    { text: "Dấu huyền ( ̀ )", correct: false, val: "dấu huyền" }
+                ]
+            },
+            {
+                prompt: "Tìm chữ 'cá' giúp bạn Ếch nhé!",
+                speak: "Tìm chữ cá giúp bạn Ếch nhé!",
+                options: [
+                    { text: "🌱 cỏ", correct: false, val: "cỏ" },
+                    { text: "🌴 cọ", correct: false, val: "cọ" },
+                    { text: "🐟 cá", correct: true, val: "cá" },
+                    { text: "🔤 c", correct: false, val: "c" }
+                ]
+            },
+            {
+                prompt: "Khi gặp người lớn, bé nói câu gì?",
+                speak: "Khi gặp người lớn, bé nói câu gì?",
+                options: [
+                    { text: "Con chào bố ạ!", correct: true, val: "Con chào bố ạ!" },
+                    { text: "Không nói gì", correct: false, val: "không nói gì" },
+                    { text: "Đi chơi đây", correct: false, val: "đi chơi đây" },
+                    { text: "Tạm biệt luôn", correct: false, val: "tạm biệt" }
+                ]
+            },
+            {
+                prompt: "Bé chọn cây 'cọ' (c - o - nặng - cọ)",
+                speak: "Bé chọn cây cọ nào",
+                options: [
+                    { text: "🌱 cỏ", correct: false, val: "cỏ" },
+                    { text: "🌴 cọ", correct: true, val: "cọ" },
+                    { text: "🐟 cá", correct: false, val: "cá" },
+                    { text: "🔤 a", correct: false, val: "a" }
+                ]
+            }
+        ];
+
+        function playQuizPrompt() {
+            const q = quizData[currentQuizIndex];
+            speakText(q.speak);
+        }
+
+        function loadQuizQuestion() {
+            const q = quizData[currentQuizIndex];
+            document.getElementById('quiz-progress').innerText = `Câu ${currentQuizIndex + 1} / ${quizData.length}`;
+            document.getElementById('quiz-prompt').innerText = q.prompt;
+            document.getElementById('quiz-feedback').innerHTML = '';
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            // Play voice prompt
+            playQuizPrompt();
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `btn-cartoon bg-gradient-to-r from-amber-100 to-amber-200 hover:from-amber-200 hover:to-amber-300 text-amber-900 border-4 border-amber-300 font-extrabold text-xl py-4 px-6 rounded-2xl shadow-cartoon text-center flex items-center justify-center`;
+                btn.innerText = opt.text;
+                btn.onclick = () => handleAnswer(opt, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(option, btnElement) {
+            const feedbackEl = document.getElementById('quiz-feedback');
+            
+            if (option.correct) {
+                playCorrectSound();
+                starsScore += 10;
+                document.getElementById('star-count').innerText = starsScore;
+
+                // Visual Feedback
+                feedbackEl.innerHTML = `<span class="text-emerald-600 animate-bounce">🎉 Tuyệt vời! Bé giỏi quá! +10 ⭐</span>`;
+                speakText("Hoan hô! Bé chọn chính xác rồi!");
+
+                // Confetti animation
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+
+                // Next question after delay
+                setTimeout(() => {
+                    currentQuizIndex = (currentQuizIndex + 1) % quizData.length;
+                    loadQuizQuestion();
+                }, 2200);
+
+            } else {
+                playWrongSound();
+                feedbackEl.innerHTML = `<span class="text-rose-500 animate-wiggle">❌ Thử lại nhé bé ơi!</span>`;
+                speakText("Bé chọn lại một lần nữa xem nào!");
+            }
+        }
+
+        // Initialize view
+        window.onload = function() {
+            switchTab('learn');
+        };
+    </script>
+</body>
+</html>
